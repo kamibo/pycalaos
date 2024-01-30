@@ -38,7 +38,7 @@ class Item:
 
     _state = None
 
-    def __init__(self, data, room, conn):
+    def __init__(self, data, room, set_state_fn):
         self._id = data["id"]
         self._gui_type = data["gui_type"]
         self._io_type = data["io_type"]
@@ -48,7 +48,7 @@ class Item:
         self._visible = data["visible"] == "true"
         self.internal_set_state(data["state"])
         self._room = room
-        self._conn = conn
+        self._set_state_fn = set_state_fn
 
     def __repr__(self):
         return f"{self.info} = {self.state}"
@@ -103,24 +103,10 @@ class Item:
     def room(self):
         return self._room
 
-    def _send(self, value):
-        _LOGGER.debug(f"Setting state of {self._id} ({self._name}) with value: {value}")
-        response = self._conn.send(
-            {
-                "action": "set_state",
-                "type": self._io_type,
-                "id": self._id,
-                "value": value,
-            }
-        )
-        if not response["success"]:
-            _LOGGER.error(
-                f"Failed to set state of {self._id} ({self._name}) with value: {value}"
-            )
-
-    def _update_state(self):
-        result = self._conn.send({"action": "get_state", "items": [self._id]})
-        self._state = self._translate(result[self._id])
+    async def _send(self, value):
+        _LOGGER.debug(f"Setting state of {self._id} ({self._name})"
+                      "with value: {value}")
+        await self._set_state_fn(self._id, value)
 
     def _translate(self, state: str):
         return state

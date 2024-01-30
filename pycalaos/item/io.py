@@ -59,70 +59,63 @@ class InputTimer(Item):
     def _translate(self, state: str):
         return state == "true"
 
-    def start(self):
-        self._send("start")
-        self._update_state()
+    async def start(self):
+        await self._send("start")
 
-    def stop(self):
-        self._send("stop")
-        self._update_state()
+    async def stop(self):
+        await self._send("stop")
 
-    def reset(self, hours, minutes, seconds, milliseconds):
-        self._send(f"{hours}:{minutes}:{seconds}:{milliseconds}")
-        self._update_state()
+    async def reset(self, hours, minutes, seconds, milliseconds):
+        await self._send(f"{hours}:{minutes}:{seconds}:{milliseconds}")
 
 
 class InternalBool(Item):
     def _translate(self, state: str):
         return state == "true"
 
-    def true(self):
-        self._send("true")
+    async def true(self):
+        await self._send("true")
         self._state = True
 
-    def false(self):
-        self._send("false")
+    async def false(self):
+        await self._send("false")
         self._state = False
 
-    def toggle(self):
-        self._send("toggle")
-        self._update_state()
+    async def toggle(self):
+        await self._send("toggle")
 
-    def impulse(self, *pattern):
+    async def impulse(self, *pattern):
         cmd = "impulse"
         for step in pattern:
             cmd += f" {step}"
-        self._send(cmd)
+        await self._send(cmd)
         print(cmd)
-        self._update_state()
 
 
 class InternalInt(Item):
     def _translate(self, state: str):
         return int(state)
 
-    def set(self, value):
-        self._send(f"{value}")
+    async def set(self, value):
+        await self._send(f"{value}")
         self._state = value
 
-    def inc(self, value=0):
+    async def inc(self, value=0):
         if value == 0:
-            self._send("inc")
+            await self._send("inc")
         else:
-            self._send(f"inc {value}")
-        self._update_state()
+            await self._send(f"inc {value}")
 
-    def dec(self, value=0):
+    async def dec(self, value=0):
         if value == 0:
-            self._send("dec")
+            await self._send("dec")
         else:
-            self._send(f"dec {value}")
-        self._update_state()
+            await self._send(f"dec {value}")
 
 
 class InternalString(Item):
-    def set(self, value):
-        self._send(value)
+    async def set(self, value):
+        await self._send(value)
         self._state = value
 
 
@@ -130,25 +123,23 @@ class OutputLight(Item):
     def _translate(self, state: str):
         return state == "true"
 
-    def true(self):
-        self._send("true")
+    async def true(self):
+        await self._send("true")
         self._state = True
 
-    def false(self):
-        self._send("false")
+    async def false(self):
+        await self._send("false")
         self._state = False
 
-    def toggle(self):
-        self._send("toggle")
-        self._update_state()
+    async def toggle(self):
+        await self._send("toggle")
 
-    def impulse(self, *pattern):
+    async def impulse(self, *pattern):
         cmd = "impulse"
         for step in pattern:
             cmd += f" {step}"
-        self._send(cmd)
+        await self._send(cmd)
         print(cmd)
-        self._update_state()
 
 
 class OutputLightDimmer(Item):
@@ -160,65 +151,59 @@ class OutputLightDimmer(Item):
             value = 0
         return value
 
-    def true(self):
-        self._send("true")
-        self._update_state()
+    async def true(self):
+        await self._send("true")
 
-    def false(self):
-        self._send("false")
+    async def false(self):
+        await self._send("false")
         self._state = 0
 
-    def toggle(self):
-        self._send("toggle")
-        self._update_state()
+    async def toggle(self):
+        await self._send("toggle")
 
-    def impulse(self, *pattern):
+    async def impulse(self, *pattern):
         cmd = "impulse"
         for step in pattern:
             cmd += f" {step}"
-        self._send(cmd)
+        await self._send(cmd)
         print(cmd)
-        self._update_state()
 
-    def set_off(self, value):
+    async def set_off(self, value):
         if value < 1:
             value = 1
         elif value > 100:
             value = 100
-        self._send(f"set off {value}")
+        await self._send(f"set off {value}")
         if self._state != 0:
             self._state = value
 
-    def set(self, value):
+    async def set(self, value):
         if value < 1:
             value = 1
         elif value > 100:
             value = 100
-        self._send(f"set {value}")
+        await self._send(f"set {value}")
         self._state = value
 
-    def up(self, value):
+    async def up(self, value):
         if value < 1:
             value = 1
         elif value > 100:
             value = 100
-        self._send(f"up {value}")
-        self._update_state()
+        await self._send(f"up {value}")
 
-    def down(self, value):
+    async def down(self, value):
         if value < 1:
             value = 1
         elif value > 100:
             value = 100
-        self._send(f"down {value}")
-        self._update_state()
+        await self._send(f"down {value}")
 
-    def hold_press(self):
-        self._send("hold press")
+    async def hold_press(self):
+        await self._send("hold press")
 
-    def hold_stop(self):
-        self._send("hold stop")
-        self._update_state()
+    async def hold_stop(self):
+        await self._send("hold stop")
 
 
 class OutputShutterAction(StrEnum):
@@ -230,71 +215,63 @@ class OutputShutterAction(StrEnum):
 
 
 class OutputShutterSmart(Item):
-    def _translate(self, state: str):
+    async def _translate(self, state: str):
         infos = state.split()
         return {"action": OutputShutterAction(infos[0]), "position": int(infos[1])}
 
-    def stop(self):
-        self._send("stop")
-        self._update_state()
+    async def stop(self):
+        await self._send("stop")
 
-    def toggle(self):
-        self._send("toggle")
-        self._update_state()
+    async def toggle(self):
+        await self._send("toggle")
 
-    def impulse_up(self, duration):
-        self._send(f"impulse up {duration}")
-        self._update_state()
+    async def impulse_up(self, duration):
+        await self._send(f"impulse up {duration}")
 
-    def impulse_down(self, duration):
-        self._send(f"impulse down {duration}")
-        self._update_state()
+    async def impulse_down(self, duration):
+        await self._send(f"impulse down {duration}")
 
-    def set(self, value):
+    async def set(self, value):
         if value < 1:
             value = 1
         elif value > 100:
             value = 100
-        self._send(f"set {value}")
-        self._update_state()
+        await self._send(f"set {value}")
 
-    def up(self, value=0):
+    async def up(self, value=0):
         if value == 0:
-            self._send(f"up")
+            await self._send("up")
             return
         else:
             if value < 1:
                 value = 1
             elif value > 100:
                 value = 100
-            self._send(f"up {value}")
-        self._update_state()
+            await self._send(f"up {value}")
 
-    def down(self, value=0):
+    async def down(self, value=0):
         if value == 0:
-            self._send(f"down")
+            await self._send("down")
             return
         else:
             if value < 1:
                 value = 1
             elif value > 100:
                 value = 100
-            self._send(f"down {value}")
-        self._update_state()
+            await self._send(f"down {value}")
 
-    def calibrate(self):
-        self._send(f"calibrate")
-        self._update_state()
+    async def calibrate(self):
+        await self._send("calibrate")
 
 
 class Scenario(Item):
     def _translate(self, state: str):
         return state == "true"
 
-    def true(self):
-        self._send("true")
+    async def true(self):
+        await self._send("true")
         self._state = True
 
-    def false(self):
-        self._send("false")
+    async def false(self):
+        await self._send("false")
         self._state = False
