@@ -215,7 +215,7 @@ class OutputShutterAction(StrEnum):
 
 
 class OutputShutterSmart(Item):
-    async def _translate(self, state: str):
+    def _translate(self, state: str):
         infos = state.split()
         return {"action": OutputShutterAction(infos[0]), "position": int(infos[1])}
 
@@ -265,7 +265,7 @@ class OutputShutterSmart(Item):
 
 
 class OutputShutter(Item):
-    async def _translate(self, state: str):
+    def _translate(self, state: str):
         return state == "true"
 
     async def stop(self):
