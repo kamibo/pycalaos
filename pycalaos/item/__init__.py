@@ -23,6 +23,7 @@ types = {
     "WODali": io.OutputLightDimmer,
     "WODigital": io.OutputLight,
     "WOVoletSmart": io.OutputShutterSmart,
+    "WOVolet": io.OutputShutter,
 }
 
 

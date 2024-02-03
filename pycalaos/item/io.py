@@ -264,6 +264,23 @@ class OutputShutterSmart(Item):
         await self._send("calibrate")
 
 
+class OutputShutter(Item):
+    async def _translate(self, state: str):
+        return state == "true"
+
+    async def stop(self):
+        await self._send("stop")
+
+    async def toggle(self):
+        await self._send("toggle")
+
+    async def up(self):
+        await self._send("up")
+
+    async def down(self):
+        await self._send("down")
+
+
 class Scenario(Item):
     def _translate(self, state: str):
         return state == "true"
